@@ -37,14 +37,18 @@ $(function () {
 
 		//等待提交
 		submitHandler : function (form) {
+
 			//打开验证码
 			$('#verify_register').dialog('open');
+
+
 
 			$(form).ajaxSubmit({
 				url : ThinkPHP['MODULE'] + '/User/register',
 				type : 'POST',
 
 				beforeSubmit:function(){
+				    //打开loading的对话框
 					$('#loading').dialog('open');
 					//widget获得dialog的对象，然后可以使用find。找到第二个button（第一个是关闭，第二个才是提交的按钮）
 					$('#register').dialog('widget').find('button').eq(1).button('disable');
@@ -234,14 +238,25 @@ $(function () {
 			//调整button位置
 			style:'right:85px',
 		}],
+		//验证码对话框关闭以后，注册对话框的提交按钮可以用
 		close:function(){
 			$('#register').dialog('widget').find('button').eq(1).button('enable');
 		},
+
+		//验证 验证码是否正确
+	}).validate({
+		submitHandler : function (form) {
+
+			$(form).ajaxSubmit({
+				url : ThinkPHP['MODULE'] + '/User/checkVerify',
+				type : 'POST',
+			});
+
+		}
 	});
 
 
 	//随机刷新验证码
-
 $('.changeimg').click(function(){
 	var verifyimg = $('.verifyimg').attr('src');
 	$('.verifyimg').attr('src',verifyimg+'?random='+Math.random());

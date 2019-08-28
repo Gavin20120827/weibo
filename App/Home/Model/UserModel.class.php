@@ -22,6 +22,8 @@ class UserModel extends Model {
         array('username','','-5',self::EXISTS_VALIDATE,'unique',self::MODEL_INSERT),
         //-6,邮箱被占用！
         array('email','','-6',self::EXISTS_VALIDATE,'unique',self::MODEL_INSERT),
+        //-7验证码错误
+        array('verify','check_verify','-7',self::EXISTS_VALIDATE,'function'),
     );
     
     
@@ -33,7 +35,7 @@ class UserModel extends Model {
     );
     
     
-    //验证占用字段
+    //验证数据
     public function checkField($field,$type){
         $data = array();
         switch ($type){
@@ -42,6 +44,9 @@ class UserModel extends Model {
                 break;
             case 'email':
                 $data['email'] = $field;
+                break;
+            case 'verify':
+                $data['verify'] = $field;
                 break;
             default:
                 return 0;

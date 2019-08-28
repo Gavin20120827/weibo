@@ -31,8 +31,7 @@ class UserController extends Controller {
           $User = D('User');
           $uid  = $User->checkField(I('post.username'),'username');
           echo $uid >0 ? 'true' : 'false';
-            
-           
+
         }
     }
     
@@ -46,8 +45,31 @@ class UserController extends Controller {
             echo $uid > 0 ? 'true':'false';
         }
     }
-	
-	
+    
+    
+    
+    //ajax验证数据，验证码返回给ajax
+	//直接使用方法验证
+//     public function checkVerify(){
+        
+//         if (IS_AJAX){
+//             if (check_verify(I('post.verify'))){
+//                 echo '验证码正确';
+//             }else {
+//                 echo '验证码错误';
+//             }
+//         }
+//     }
+
+    //使用usermodel中的自动验证
+        public function checkVerify(){
+    
+            if (IS_AJAX){
+                $User = D('User');
+                $uid =  $User->checkField(I('post.verify'),'verify');
+                echo $uid > 0 ? 'true':'false';
+            }
+        }
 	
 	
 	
