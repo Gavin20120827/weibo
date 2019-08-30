@@ -59,12 +59,13 @@ class UserModel extends Model {
     //注册一条用户
     //其中的repassword，只是为了验证（controller中同样需要获取这个字段）
     //在create中会被自动过滤(因为他只是表单字段，非数据表字段)
-    public function register($username,$password,$repassword,$email){    
+    public function register($username,$password,$repassword,$email,$verify){    
         $data = array(          
             'username'=>$username,
             'password'=>$password,
             'repassword'=>$repassword,
             'email'=>$email,
+            'verify'=>$verify,
         );
         
          

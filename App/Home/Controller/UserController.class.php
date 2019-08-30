@@ -16,7 +16,7 @@ class UserController extends Controller {
             //这里就是普通的实例化model，然后执行里边的方法
 //            $User = new UserModel();
             $User = D('user');
-           $uid =  $User->register(I('post.username'),I('post.password'),I('post.repassword'),I('post.email'));         
+            $uid =  $User->register(I('post.username'),I('post.password'),I('post.repassword'),I('post.email'),I('post.verify'));         
            echo $uid;
         }else {
             $this->error('非法操作—禁止直接访问User');
@@ -61,7 +61,7 @@ class UserController extends Controller {
 //         }
 //     }
 
-    //使用usermodel中的自动验证
+    //ajax验证数据，验证码返回给ajax
         public function checkVerify(){
     
             if (IS_AJAX){

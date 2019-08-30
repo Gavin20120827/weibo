@@ -41,40 +41,6 @@ $(function () {
 			//打开验证码
 			$('#verify_register').dialog('open');
 
-
-
-			$(form).ajaxSubmit({
-				url : ThinkPHP['MODULE'] + '/User/register',
-				type : 'POST',
-
-				beforeSubmit:function(){
-				    //打开loading的对话框
-					$('#loading').dialog('open');
-					//widget获得dialog的对象，然后可以使用find。找到第二个button（第一个是关闭，第二个才是提交的按钮）
-					$('#register').dialog('widget').find('button').eq(1).button('disable');
-				},
-
-				success:function(responseText){
-					if (responseText) {
-						$('#register').dialog('widget').find('button').eq(1).button('enable');
-						$('#loading').css('background', 'url(' + ThinkPHP['IMG']+ '/success.gif) no-repeat 20px center').html('数据新增成功...');
-						//设置延迟关闭
-						setTimeout(function(){
-							$('#loading').dialog('close');
-							$('#register').dialog('close');
-							//重置表单，不然如果未刷新浏览器的话，重新点击注册的时候，上次的数据还会保留
-							$('#register').resetForm();
-							//关闭以后，重新换回去
-							$('#register span.star').html('*').removeClass('succ');
-                            //关闭以后，重新换回去
-                            $('#loading').css('background', 'url(' + ThinkPHP['IMG']+ '/loading.gif) no-repeat 20px center').html('数据交互中...');
-						},1000);
-
-					}
-
-				},
-
-			});
 		},
 
 
@@ -247,18 +213,121 @@ $(function () {
 	}).validate({
 		submitHandler : function (form) {
 
-			$(form).ajaxSubmit({
-				url : ThinkPHP['MODULE'] + '/User/checkVerify',
+			//注意，此处不能直接写form，form指只是验证码的form了
+			//但是写了reg之后，并没有提交验证码，导致服务器验证错误。所以需要加data字段
+			$('#register').ajaxSubmit({
+				url : ThinkPHP['MODULE'] + '/User/register',
 				type : 'POST',
-			});
+				data:{
+					verify:$('#verify').val(),
 
-		}
+				},
+	
+
+				beforeSubmit:function(){
+				    //打开loading的对话框
+					$('#loading').dialog('open');
+					//widget获得dialog的对象，然后可以使用find。找到第二个button（第一个是关闭，第二个才是提交的按钮）
+					$('#register').dialog('widget').find('button').eq(1).button('disable');
+					$('#verify_register').dialog('widget').find('button').eq(1).button('disable');
+				},
+
+				success:function(responseText){
+					if (responseText) {
+						$('#register').dialog('widget').find('button').eq(1).button('enable');
+						$('#verify_register').dialog('widget').find('button').eq(1).button('enable');
+						$('#loading').css('background', 'url(' + ThinkPHP['IMG']+ '/success.gif) no-repeat 20px center').html('数据新增成功...');
+						//设置延迟关闭
+						setTimeout(function(){
+							$('.verifyimg').attr('src',verifyimg+'?random='+Math.random());
+							$('#verify_register').dialog('close');
+							$('#loading').dialog('close');
+							$('#register').dialog('close');
+							//重置表单，不然如果未刷新浏览器的话，重新点击注册的时候，上次的数据还会保留
+							$('#register').resetForm();
+							$('#verify_register').resetForm();
+							//关闭以后，重新换回去
+							$('span.star').html('*').removeClass('succ');
+                            //关闭以后，重新换回去
+                            $('#loading').css('background', 'url(' + ThinkPHP['IMG']+ '/loading.gif) no-repeat 20px center').html('数据交互中...');
+						},1000);
+
+					}
+
+				},
+
+			});
+		},
+
+
+
+		//ol是需要在tpl中创建的。表示放到ol中
+		//li不需要在tpl中创建。可以在css中设置css的值
+		errorLabelContainer:'ol.ver_error',
+		wrapper:'li',
+
+		showErrors:function(errorMap,errorList){
+			// console.log(errorList);可以尝试打印，是错误信息
+		     
+		     //计算错误的数量
+		     var errors = this.numberOfInvalids();
+		     //自动调整dialog的高度
+		     if (errors > 0) {
+		     	$('#verify_register').dialog('option','height',errors*20+300);
+		     }else {
+		     	$('#verify_register').dialog('option','height',300);
+		     };
+
+             //默认的错误输出方式
+		     this.defaultShowErrors();
+		},
+
+		//错的话，红色框
+		highlight:function(element,errorClass){
+			$(element).css('border','1px solid red');
+
+			//调整错误提示。element指的是input，parent指的是p
+			$(element).parent().find('span').html('*').removeClass('succ');
+		},
+
+
+		//正确以后
+		unhighlight:function(element,errorClass){
+			//正确以后，调整回原来的框
+			$(element).css('border','1px solid #ccc');
+
+			//正确以后，*号变为勾——联动css中设置span.succ的class
+			//element本身指的是input，先转到父节点p，然后find后代节点的span。
+			$(element).parent().find('span').html('&nbsp;').addClass('succ');
+		},
+
+
+
+		rules:{
+			verify:{
+				required:true,
+				remote:{
+					url:ThinkPHP['MODULE'] + '/User/checkVerify',
+					type:'post',
+				}
+
+			},
+
+		},
+		messages:{
+			verify:{
+				required:"验证码不能为空",
+			    remote:"验证码不正确！",
+
+			},
+
+		},
 	});
 
 
 	//随机刷新验证码
+var verifyimg = $('.verifyimg').attr('src');
 $('.changeimg').click(function(){
-	var verifyimg = $('.verifyimg').attr('src');
 	$('.verifyimg').attr('src',verifyimg+'?random='+Math.random());
 });
 

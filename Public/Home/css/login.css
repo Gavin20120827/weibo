@@ -127,7 +127,7 @@ body {
 	color:red;
 }
 
-#register span.succ{
+#register span.succ,#verify_register span.succ{
 	width: 28px;
 	display: inline-block;
 	background: url(../img/success.gif) no-repeat bottom;
@@ -140,14 +140,14 @@ body {
 }
 
 
-#register ol.reg_errors{
+#register ol.reg_errors,#verify_register ol.ver_error{
 	margin: 0;
 	padding: 0 0 0 20px;
 	color: red;
 	font-size: 14px;
 }
 
-#register ol.reg_errors li{
+#register ol.reg_errors li,#verify_register ol.ver_error li{
 	height: 20px;
 }
 
@@ -189,5 +189,4 @@ color:red;
 #verify_register .verifyimg {
 cursor:pointer;
 }
-
 
